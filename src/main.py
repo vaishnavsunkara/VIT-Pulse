@@ -2,12 +2,17 @@
 VIT-Pulse
 ---------
 A student-focused campus problem reporting and tracking system.
-
-Author: Vaishnav Sunkara
-Version: 0.1.0
 """
 
-# This is the starting point of the VIT-Pulse application.
+from complaints import Complaint
 
-print("VIT-Pulse")
-print("Campus Problem Reporting and Tracking System")
+
+# Create a sample complaint
+complaint1 = Complaint(
+    "Wi-Fi not working",
+    "Wi-Fi keeps disconnecting in Block 7A.",
+    "Wi-Fi"
+)
+
+# Display the complaint
+complaint1.display()
