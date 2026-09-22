@@ -2,61 +2,57 @@
 
 A student-focused campus problem reporting and tracking system.
 
-## Project Goal
+## About
 
-VIT-Pulse is designed to make it easier for students to report campus-related problems, track their status, and help representatives/admins manage issues efficiently.
+VIT-Pulse is a Python-based campus issue management system designed to help students report problems and allow representatives or administrators to track and manage them.
 
-## Planned Features
+The project focuses on common campus issues such as:
 
-- Student complaint reporting
-- Complaint status tracking
-- Categories for different campus issues
-- Priority levels
-- Lost & Found
-- Duplicate complaint detection
-- Admin/FR dashboard
-- Complaint analytics
-- Database storage
-- Web interface
+- Wi-Fi problems
+- Hostel maintenance
+- Mess-related issues
+- Electrical problems
+- Cleaning and hygiene
+- Other campus facilities
 
-## Development Roadmap
+## Features
 
-### V1 — Python Application
-- Basic menu system
+### Student Portal
 - Create complaints
+- Select complaint category
+- Set complaint priority
 - View complaints
 - Search complaints
+
+### Admin / FR Portal
+- View all complaints
+- Search complaints
 - Update complaint status
+- View complaint statistics
 
-### V2 — Database
+### Database
 - SQLite database
-- Permanent complaint storage
-- User records
-- Status history
-
-### V3 — Web Application
-- Student interface
-- Admin/FR dashboard
-- HTML/CSS/JavaScript
-- Python backend
-
-### V4 — Smart Features
-- Duplicate complaint detection
-- Priority calculation
-- Analytics
-- Better search
+- Persistent complaint storage
+- Automatic complaint IDs
+- Status tracking
 
 ## Technology Stack
 
 - Python
 - SQLite
-- HTML
-- CSS
-- JavaScript
-- Git & GitHub
+- Object-Oriented Programming
+- Git
+- GitHub
 
-## Project Status
+## Project Structure
 
-**Version:** 0.1.0
-
-**Current Stage:** Initial project setup
+```text
+VIT-Pulse/
+│
+├── src/
+│   ├── main.py
+│   ├── complaints.py
+│   └── database.py
+│
+├── README.md
+└── .gitignore
