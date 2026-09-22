@@ -13,7 +13,7 @@ from database import (
 
 
 def create_new_complaint():
-    """Get complaint details and save them to the database."""
+    """Create and save a new complaint."""
 
     print("\n--- Create New Complaint ---")
 
@@ -75,14 +75,12 @@ def view_complaints():
         print("\nNo complaints have been submitted yet.")
         return
 
-    print("\n--- All Complaints ---")
-
     for complaint in complaints:
         display_complaint(complaint)
 
 
 def search_complaints():
-    """Search complaints by title, category or status."""
+    """Search complaints."""
 
     complaints = get_complaints()
 
@@ -91,7 +89,6 @@ def search_complaints():
         return
 
     keyword = input("\nEnter search keyword: ").strip().lower()
-
     found = False
 
     for complaint in complaints:
@@ -111,7 +108,7 @@ def search_complaints():
 
 
 def change_complaint_status():
-    """Update the status of a complaint."""
+    """Update complaint status."""
 
     complaints = get_complaints()
 
@@ -148,23 +145,55 @@ def change_complaint_status():
         print("\nPlease enter a valid complaint ID.")
 
 
-def main():
-    """Run the VIT-Pulse application."""
+def show_statistics():
+    """Display complaint statistics."""
 
-    create_table()
+    complaints = get_complaints()
+
+    total = len(complaints)
+    pending = 0
+    in_progress = 0
+    resolved = 0
+    high_priority = 0
+
+    for complaint in complaints:
+        priority = complaint[4]
+        status = complaint[5]
+
+        if status == "Pending":
+            pending += 1
+        elif status == "In Progress":
+            in_progress += 1
+        elif status == "Resolved":
+            resolved += 1
+
+        if priority == "High":
+            high_priority += 1
+
+    print("\n" + "=" * 50)
+    print("              VIT-PULSE DASHBOARD")
+    print("=" * 50)
+    print(f"Total Complaints : {total}")
+    print(f"Pending          : {pending}")
+    print(f"In Progress      : {in_progress}")
+    print(f"Resolved         : {resolved}")
+    print(f"High Priority    : {high_priority}")
+    print("=" * 50)
+
+
+def student_menu():
+    """Display the student menu."""
 
     while True:
         print("\n")
         print("=" * 50)
-        print("                 VIT-PULSE")
-        print("     Campus Problem Reporting System")
+        print("             STUDENT PORTAL")
         print("=" * 50)
 
         print("\n1. Create Complaint")
         print("2. View Complaints")
         print("3. Search Complaints")
-        print("4. Update Complaint Status")
-        print("5. Exit")
+        print("4. Back")
 
         choice = input("\nEnter your choice: ")
 
@@ -178,14 +207,78 @@ def main():
             search_complaints()
 
         elif choice == "4":
+            break
+
+        else:
+            print("\nInvalid choice.")
+
+
+def admin_menu():
+    """Display the admin/FR menu."""
+
+    while True:
+        print("\n")
+        print("=" * 50)
+        print("             ADMIN / FR PORTAL")
+        print("=" * 50)
+
+        print("\n1. View All Complaints")
+        print("2. Search Complaints")
+        print("3. Update Complaint Status")
+        print("4. Dashboard Statistics")
+        print("5. Back")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == "1":
+            view_complaints()
+
+        elif choice == "2":
+            search_complaints()
+
+        elif choice == "3":
             change_complaint_status()
 
+        elif choice == "4":
+            show_statistics()
+
         elif choice == "5":
+            break
+
+        else:
+            print("\nInvalid choice.")
+
+
+def main():
+    """Start the VIT-Pulse application."""
+
+    create_table()
+
+    while True:
+        print("\n")
+        print("=" * 50)
+        print("                 VIT-PULSE")
+        print("     Campus Problem Reporting System")
+        print("=" * 50)
+
+        print("\n1. Student Portal")
+        print("2. Admin / FR Portal")
+        print("3. Exit")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == "1":
+            student_menu()
+
+        elif choice == "2":
+            admin_menu()
+
+        elif choice == "3":
             print("\nThank you for using VIT-Pulse!")
             break
 
         else:
-            print("\nInvalid choice. Please select 1-5.")
+            print("\nInvalid choice.")
 
 
 if __name__ == "__main__":
