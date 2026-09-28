@@ -1,14 +1,4 @@
-"""
-Complaint management for VIT-Pulse.
-
-This module defines the Complaint class and functions
-for creating, displaying, searching, and updating complaints.
-"""
-
-
 class Complaint:
-    """Represents a single campus complaint."""
-
     def __init__(self, title, description, category, priority="Medium"):
         self.title = title
         self.description = description
@@ -17,8 +7,6 @@ class Complaint:
         self.status = "Pending"
 
     def display(self, complaint_id):
-        """Display complete complaint information."""
-
         print("\n" + "=" * 45)
         print(f"Complaint ID: {complaint_id}")
         print(f"Title: {self.title}")
@@ -29,6 +17,4 @@ class Complaint:
         print("=" * 45)
 
     def update_status(self, new_status):
-        """Update the complaint status."""
-
         self.status = new_status

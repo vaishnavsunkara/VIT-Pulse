@@ -1,24 +1,15 @@
-"""
-VIT-Pulse
----------
-A student-focused campus problem reporting and tracking system.
-"""
-
-from database import (
-    create_table,
-    add_complaint,
-    get_complaints,
-    update_status
-)
+from database import create_table, add_complaint, get_complaints, update_status
 
 
 def create_new_complaint():
-    """Create and save a new complaint."""
-
     print("\n--- Create New Complaint ---")
 
     title = input("Enter complaint title: ").strip()
     description = input("Enter complaint description: ").strip()
+
+    if not title or not description:
+        print("\nTitle and description cannot be empty.")
+        return
 
     print("\nCategories:")
     print("1. Wi-Fi")
@@ -56,10 +47,6 @@ def create_new_complaint():
 
     priority = priorities.get(priority_choice, "Medium")
 
-    if not title or not description:
-        print("\nTitle and description cannot be empty.")
-        return
-
     complaint_id = add_complaint(
         title,
         description,
@@ -72,8 +59,6 @@ def create_new_complaint():
 
 
 def display_complaint(complaint):
-    """Display one complaint."""
-
     complaint_id, title, description, category, priority, status = complaint
 
     print("\n" + "=" * 50)
@@ -87,8 +72,6 @@ def display_complaint(complaint):
 
 
 def view_complaints():
-    """Display all complaints."""
-
     complaints = get_complaints()
 
     if not complaints:
@@ -102,8 +85,6 @@ def view_complaints():
 
 
 def search_complaints():
-    """Search complaints by keyword."""
-
     complaints = get_complaints()
 
     if not complaints:
@@ -111,7 +92,6 @@ def search_complaints():
         return
 
     keyword = input("\nEnter search keyword: ").strip().lower()
-
     found = False
 
     for complaint in complaints:
@@ -131,8 +111,6 @@ def search_complaints():
 
 
 def filter_by_category():
-    """Display complaints belonging to a selected category."""
-
     complaints = get_complaints()
 
     if not complaints:
@@ -177,8 +155,6 @@ def filter_by_category():
 
 
 def change_complaint_status():
-    """Update complaint status."""
-
     complaints = get_complaints()
 
     if not complaints:
@@ -215,8 +191,6 @@ def change_complaint_status():
 
 
 def show_statistics():
-    """Display complaint statistics."""
-
     complaints = get_complaints()
 
     total = len(complaints)
@@ -251,8 +225,6 @@ def show_statistics():
 
 
 def student_menu():
-    """Display the student menu."""
-
     while True:
         print("\n" + "=" * 50)
         print("             STUDENT PORTAL")
@@ -278,8 +250,6 @@ def student_menu():
 
 
 def admin_menu():
-    """Display the admin/FR menu."""
-
     while True:
         print("\n" + "=" * 50)
         print("             ADMIN / FR PORTAL")
@@ -311,8 +281,6 @@ def admin_menu():
 
 
 def main():
-    """Start the VIT-Pulse application."""
-
     create_table()
 
     while True:
