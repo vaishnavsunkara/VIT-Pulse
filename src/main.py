@@ -1,4 +1,20 @@
-from database import create_table, add_complaint, get_complaints, update_status
+from database import (
+    add_complaint,
+    create_table,
+    get_complaints,
+    update_status
+)
+from complaints import Complaint
+from reports import filter_by_category, get_statistics, search_complaints
+from validation import (
+    get_category,
+    get_priority,
+    get_status,
+    show_categories,
+    show_priorities,
+    show_statuses,
+    validate_text
+)
 
 
 def create_new_complaint():
@@ -7,68 +23,29 @@ def create_new_complaint():
     title = input("Enter complaint title: ").strip()
     description = input("Enter complaint description: ").strip()
 
-    if not title or not description:
+    if not validate_text(title) or not validate_text(description):
         print("\nTitle and description cannot be empty.")
         return
 
-    print("\nCategories:")
-    print("1. Wi-Fi")
-    print("2. Hostel")
-    print("3. Mess")
-    print("4. Maintenance")
-    print("5. Cleaning")
-    print("6. Other")
+    show_categories()
+    category = get_category(input("Choose category: "))
 
-    category_choice = input("Choose category: ")
+    if category is None:
+        print("\nInvalid category.")
+        return
 
-    categories = {
-        "1": "Wi-Fi",
-        "2": "Hostel",
-        "3": "Mess",
-        "4": "Maintenance",
-        "5": "Cleaning",
-        "6": "Other"
-    }
+    show_priorities()
+    priority = get_priority(input("Choose priority: "))
 
-    category = categories.get(category_choice, "Other")
+    if priority is None:
+        print("\nInvalid priority.")
+        return
 
-    print("\nPriority:")
-    print("1. Low")
-    print("2. Medium")
-    print("3. High")
-
-    priority_choice = input("Choose priority: ")
-
-    priorities = {
-        "1": "Low",
-        "2": "Medium",
-        "3": "High"
-    }
-
-    priority = priorities.get(priority_choice, "Medium")
-
-    complaint_id = add_complaint(
-        title,
-        description,
-        category,
-        priority
-    )
+    complaint = Complaint(title, description, category, priority)
+    complaint.id = add_complaint(complaint)
 
     print("\nComplaint created successfully!")
-    print(f"Complaint ID: {complaint_id}")
-
-
-def display_complaint(complaint):
-    complaint_id, title, description, category, priority, status = complaint
-
-    print("\n" + "=" * 50)
-    print(f"Complaint ID : {complaint_id}")
-    print(f"Title        : {title}")
-    print(f"Description  : {description}")
-    print(f"Category     : {category}")
-    print(f"Priority     : {priority}")
-    print(f"Status       : {status}")
-    print("=" * 50)
+    print(f"Complaint ID: {complaint.id}")
 
 
 def view_complaints():
@@ -81,77 +58,51 @@ def view_complaints():
     print("\n--- All Complaints ---")
 
     for complaint in complaints:
-        display_complaint(complaint)
+        complaint.display()
 
 
-def search_complaints():
+def search_complaints_menu():
     complaints = get_complaints()
 
     if not complaints:
         print("\nNo complaints available.")
         return
 
-    keyword = input("\nEnter search keyword: ").strip().lower()
-    found = False
+    keyword = input("\nEnter search keyword: ").strip()
+    results = search_complaints(complaints, keyword)
 
-    for complaint in complaints:
-        _, title, description, category, _, status = complaint
-
-        if (
-            keyword in title.lower()
-            or keyword in description.lower()
-            or keyword in category.lower()
-            or keyword in status.lower()
-        ):
-            display_complaint(complaint)
-            found = True
-
-    if not found:
+    if not results:
         print("\nNo matching complaints found.")
+        return
+
+    for complaint in results:
+        complaint.display()
 
 
-def filter_by_category():
+def filter_by_category_menu():
     complaints = get_complaints()
 
     if not complaints:
         print("\nNo complaints available.")
         return
 
-    print("\nCategories:")
-    print("1. Wi-Fi")
-    print("2. Hostel")
-    print("3. Mess")
-    print("4. Maintenance")
-    print("5. Cleaning")
-    print("6. Other")
+    show_categories()
+    category = get_category(input("\nChoose category: "))
 
-    categories = {
-        "1": "Wi-Fi",
-        "2": "Hostel",
-        "3": "Mess",
-        "4": "Maintenance",
-        "5": "Cleaning",
-        "6": "Other"
-    }
-
-    choice = input("\nChoose category: ")
-
-    if choice not in categories:
+    if category is None:
         print("\nInvalid category.")
         return
 
-    selected_category = categories[choice]
-    found = False
+    results = filter_by_category(complaints, category)
 
-    print(f"\n--- {selected_category} Complaints ---")
+    print(f"\n--- {category} Complaints ---")
 
-    for complaint in complaints:
-        if complaint[3] == selected_category:
-            display_complaint(complaint)
-            found = True
-
-    if not found:
+    if not results:
         print("\nNo complaints found in this category.")
+        return
+
+    for complaint in results:
+        complaint.display()
 
 
 def change_complaint_status():
@@ -165,62 +116,34 @@ def change_complaint_status():
 
     try:
         complaint_id = int(input("\nEnter complaint ID: "))
-
-        print("\n1. Pending")
-        print("2. In Progress")
-        print("3. Resolved")
-
-        choice = input("Choose new status: ")
-
-        statuses = {
-            "1": "Pending",
-            "2": "In Progress",
-            "3": "Resolved"
-        }
-
-        if choice not in statuses:
-            print("\nInvalid status choice.")
-            return
-
-        update_status(complaint_id, statuses[choice])
-
-        print("\nComplaint status updated successfully!")
-
     except ValueError:
         print("\nPlease enter a valid complaint ID.")
+        return
+
+    show_statuses()
+    status = get_status(input("Choose new status: "))
+
+    if status is None:
+        print("\nInvalid status choice.")
+        return
+
+    if update_status(complaint_id, status):
+        print("\nComplaint status updated successfully!")
+    else:
+        print("\nComplaint ID not found.")
 
 
 def show_statistics():
-    complaints = get_complaints()
-
-    total = len(complaints)
-    pending = 0
-    in_progress = 0
-    resolved = 0
-    high_priority = 0
-
-    for complaint in complaints:
-        priority = complaint[4]
-        status = complaint[5]
-
-        if status == "Pending":
-            pending += 1
-        elif status == "In Progress":
-            in_progress += 1
-        elif status == "Resolved":
-            resolved += 1
-
-        if priority == "High":
-            high_priority += 1
+    statistics = get_statistics(get_complaints())
 
     print("\n" + "=" * 50)
     print("              VIT-PULSE DASHBOARD")
     print("=" * 50)
-    print(f"Total Complaints : {total}")
-    print(f"Pending          : {pending}")
-    print(f"In Progress      : {in_progress}")
-    print(f"Resolved         : {resolved}")
-    print(f"High Priority    : {high_priority}")
+    print(f"Total Complaints : {statistics['total']}")
+    print(f"Pending          : {statistics['pending']}")
+    print(f"In Progress      : {statistics['in_progress']}")
+    print(f"Resolved         : {statistics['resolved']}")
+    print(f"High Priority    : {statistics['high_priority']}")
     print("=" * 50)
 
 
@@ -229,7 +152,6 @@ def student_menu():
         print("\n" + "=" * 50)
         print("             STUDENT PORTAL")
         print("=" * 50)
-
         print("\n1. Create Complaint")
         print("2. View Complaints")
         print("3. Search Complaints")
@@ -242,7 +164,7 @@ def student_menu():
         elif choice == "2":
             view_complaints()
         elif choice == "3":
-            search_complaints()
+            search_complaints_menu()
         elif choice == "4":
             break
         else:
@@ -254,7 +176,6 @@ def admin_menu():
         print("\n" + "=" * 50)
         print("             ADMIN / FR PORTAL")
         print("=" * 50)
-
         print("\n1. View All Complaints")
         print("2. Search Complaints")
         print("3. Filter by Category")
@@ -267,9 +188,9 @@ def admin_menu():
         if choice == "1":
             view_complaints()
         elif choice == "2":
-            search_complaints()
+            search_complaints_menu()
         elif choice == "3":
-            filter_by_category()
+            filter_by_category_menu()
         elif choice == "4":
             change_complaint_status()
         elif choice == "5":
@@ -288,7 +209,6 @@ def main():
         print("                 VIT-PULSE")
         print("     Campus Problem Reporting System")
         print("=" * 50)
-
         print("\n1. Student Portal")
         print("2. Admin / FR Portal")
         print("3. Exit")

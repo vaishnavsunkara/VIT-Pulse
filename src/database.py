@@ -1,5 +1,8 @@
 import sqlite3
 
+from complaints import Complaint
+
+
 DATABASE_NAME = "vit_pulse.db"
 
 
@@ -26,7 +29,7 @@ def create_table():
     connection.close()
 
 
-def add_complaint(title, description, category, priority):
+def add_complaint(complaint):
     connection = connect_database()
     cursor = connection.cursor()
 
@@ -34,12 +37,16 @@ def add_complaint(title, description, category, priority):
         INSERT INTO complaints
         (title, description, category, priority, status)
         VALUES (?, ?, ?, ?, ?)
-    """, (title, description, category, priority, "Pending"))
+    """, (
+        complaint.title,
+        complaint.description,
+        complaint.category,
+        complaint.priority,
+        complaint.status
+    ))
 
     connection.commit()
-
     complaint_id = cursor.lastrowid
-
     connection.close()
 
     return complaint_id
@@ -55,9 +62,22 @@ def get_complaints():
         ORDER BY id
     """)
 
-    complaints = cursor.fetchall()
-
+    rows = cursor.fetchall()
     connection.close()
+
+    complaints = []
+
+    for row in rows:
+        complaints.append(
+            Complaint(
+                title=row[1],
+                description=row[2],
+                category=row[3],
+                priority=row[4],
+                status=row[5],
+                complaint_id=row[0]
+            )
+        )
 
     return complaints
 
@@ -71,6 +91,19 @@ def update_status(complaint_id, status):
         SET status = ?
         WHERE id = ?
     """, (status, complaint_id))
+
+    connection.commit()
+    updated = cursor.rowcount > 0
+    connection.close()
+
+    return updated
+
+
+def clear_complaints():
+    connection = connect_database()
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM complaints")
 
     connection.commit()
     connection.close()
