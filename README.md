@@ -11,8 +11,8 @@ The project focuses on common campus issues such as:
 - Wi-Fi problems
 - Hostel maintenance
 - Mess-related issues
-- Electrical problems
 - Cleaning and hygiene
+- Electrical and maintenance problems
 - Other campus facilities
 
 ## Features
@@ -29,7 +29,7 @@ The project focuses on common campus issues such as:
 - Search complaints
 - Filter complaints by category
 - Update complaint status
-- View complaint statistics
+- View dashboard statistics
 
 ### Database
 - SQLite database
@@ -44,22 +44,21 @@ The project focuses on common campus issues such as:
 - Object-Oriented Programming
 - Git
 - GitHub
+- Python standard library only
 
 ## Project Structure
 
 ```text
 VIT-Pulse/
-│
 ├── src/
 │   ├── main.py
 │   ├── complaints.py
 │   ├── database.py
 │   ├── validation.py
 │   └── reports.py
-│
 ├── tests/
+│   ├── __init__.py
 │   └── test_vit_pulse.py
-│
 ├── README.md
 ├── statement.md
 ├── requirements.txt
@@ -76,8 +75,12 @@ python src/main.py
 
 ## Running Tests
 
+From the project root:
+
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-The project uses only Python standard-library modules, so no external packages are required.
+The tests cover the Complaint class, validation functions, search/filter/statistics functions, and SQLite database operations.
+
+No external Python packages are required.
